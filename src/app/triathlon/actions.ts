@@ -1,20 +1,33 @@
-import { Triathlon } from "@/model/src/components/triathlon/triathlon";
-import { TriathlonType } from "@/model/src/lib/enums/triathlonType";
-import { Sport } from "@/model/src/lib/enums/sport";
-import { TriathlonInformation } from "@/model/src/lib/types/triathlonInformation";
+import { Triathlon } from "@/model/components/triathlon/triathlon";
+import { TriathlonType } from "@/model/lib/enums/triathlonType";
+import { Sport } from "@/model/lib/enums/sport";
+import { TriathlonInformation } from "@/model/lib/types/triathlonInformation";
+import { TriathlonViewModel } from "./_viewModel/triathlonViewModel";
 
-export function getAllTriathlonData(): Record<TriathlonType, TriathlonInformation> {
-    return Triathlon.getAllTriathlonInformation();
+export default class TriathlonController {
+    static readonly #viewModel = new TriathlonViewModel(
+        Triathlon.getAllTriathlonInformation(),
+        Object.values(TriathlonType),
+        Object.values(Sport)
+    );
+
+    static getViewModel(): TriathlonViewModel {
+        return this.#viewModel;
+    }
+
+    static get triathlonData(): Record<TriathlonType, TriathlonInformation> {
+        return this.#viewModel.triathlonInformation;
+    }
+
+    static get triathlonTypes(): TriathlonType[] {
+        return this.#viewModel.triathlonTypes;
+    }
+
+    static get sportTypes(): Sport[] {
+        return this.#viewModel.sportTypes;
+    }
+
+    static formatDistance(distance: number): string {
+        return `${distance} km`;
+    } 
 }
-
-export function getTriathlonTypes(): TriathlonType[] {
-    return Object.values(TriathlonType);
-}
-
-export function getSportTypes(): Sport[] {
-    return Object.values(Sport);
-}
-
-export function formatDistance(distance: number): string {
-    return `${distance} km`;
-} 
