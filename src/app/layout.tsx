@@ -32,8 +32,8 @@ export default function RootLayout({ children }: Readonly<{children: React.React
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} m-0 p-0`}>
         <ScrollToTop />
-        <NavigationMenu className="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-6xl h-[60px] flex justify-center items-center border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 rounded-lg shadow-lg px-4">
-          <NavigationMenuList className="gap-4">
+        <NavigationMenu className="fixed top-10 left-1/2 transform -translate-x-1/2 w-[95vw] max-w-6xl h-[60px] flex justify-center items-center border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 rounded-lg shadow-lg px-4">
+          <NavigationMenuList className="flex items-center justify-center gap-4 w-full">
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link href="/" className={cn(
@@ -42,7 +42,8 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                   "hover:bg-accent/70 hover:text-accent-foreground hover:shadow-md hover:scale-105",
                   "active:scale-95 active:shadow-sm",
                   "focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2",
-                  "hover:border-accent/50"
+                  "hover:border-accent/50",
+                  "flex items-center justify-center text-center"
                 )}>
                   Home
                 </Link>
@@ -57,7 +58,8 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                   "hover:bg-accent/70 hover:text-accent-foreground hover:shadow-md hover:scale-105",
                   "active:scale-95 active:shadow-sm",
                   "focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2",
-                  "hover:border-accent/50"
+                  "hover:border-accent/50",
+                  "flex items-center justify-center text-center"
                 )}>
                   Triathlons
                 </Link>
@@ -72,7 +74,8 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                   "hover:bg-accent/70 hover:text-accent-foreground hover:shadow-md hover:scale-105",
                   "active:scale-95 active:shadow-sm",
                   "focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2",
-                  "hover:border-accent/50"
+                  "hover:border-accent/50",
+                  "flex items-center justify-center text-center"
                 )}>
                   Training
                 </Link>

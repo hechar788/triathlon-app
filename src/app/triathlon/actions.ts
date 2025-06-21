@@ -1,33 +1,36 @@
-import { Triathlon } from "@/model/components/triathlon/triathlon";
-import { TriathlonType } from "@/model/lib/enums/triathlonType";
-import { Sport } from "@/model/lib/enums/sport";
-import { TriathlonInformation } from "@/model/lib/types/triathlonInformation";
 import { TriathlonViewModel } from "./_viewModel/triathlonViewModel";
+import { TriathlonRowData } from "./types";
+import useTriathlonTable from "./_table/useTriathlonTable";
 
+/**
+ * Controller class for accessing Triathlon data and components.
+ * Follows MVC/MVVM pattern by acting as a controller layer between the view (page.tsx) and the model/view-model.
+ * 
+ */
 export default class TriathlonController {
-    static readonly #viewModel = new TriathlonViewModel(
-        Triathlon.getAllTriathlonInformation(),
-        Object.values(TriathlonType),
-        Object.values(Sport)
-    );
+    /**
+     * Private static instance of the TriathlonViewModel that handles all data transformations
+     * and business logic for triathlon information display.
+     */
+    readonly #viewModel = new TriathlonViewModel();
 
-    static getViewModel(): TriathlonViewModel {
-        return this.#viewModel;
+    /**
+     * Each row contains formatted information about a specific triathlon type including
+     * difficulty, distances for each sport, and total distance.
+     * 
+     * @returns {TriathlonRowData[]} Array of formatted triathlon data for table display
+     */
+    private getTableData(): TriathlonRowData[] {
+        return this.#viewModel.getTableData();
     }
 
-    static get triathlonData(): Record<TriathlonType, TriathlonInformation> {
-        return this.#viewModel.triathlonInformation;
+    /**
+     * Gets the triathlon table component hook for rendering the data table.
+     * This method returns the hook function that should be called within a React component.
+     * 
+     * @returns {Function} The useTriathlonTable hook function
+     */
+    public getTriathlonTable() {
+        return useTriathlonTable(this.getTableData());
     }
-
-    static get triathlonTypes(): TriathlonType[] {
-        return this.#viewModel.triathlonTypes;
-    }
-
-    static get sportTypes(): Sport[] {
-        return this.#viewModel.sportTypes;
-    }
-
-    static formatDistance(distance: number): string {
-        return `${distance} km`;
-    } 
 }
