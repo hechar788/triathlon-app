@@ -3,7 +3,8 @@ import { Sport } from "@/model/lib/enums/sport";
 import { TriathlonInformation } from "@/model/lib/types/triathlonInformation";
 import { Difficulty } from "@/model/lib/enums/difficulty";
 import { Triathlon } from "@/model/components/triathlon/triathlon";
-import { TriathlonRowData, DifficultyColor } from "../types";
+import { TriathlonRowData } from "../_table/types";
+import { DifficultyColor } from "@/app/_lib/types";
 
 /**
  * View Model class that handles data transformation and business logic for triathlon information display.
@@ -49,24 +50,6 @@ export class TriathlonViewModel {
     }
 
     /**
-     * Calculates and formats the distance range for a specific sport across all triathlon types.
-     * Returns a string showing the minimum and maximum distances for the given sport.
-     * 
-     * @param {Sport} sport - The sport type to calculate range for
-     * @returns {string} Formatted distance range (e.g., "0.4km - 3.8km")
-     */
-    getSportDistanceRange(sport: Sport): string {
-        const distances = this.#triathlonTypes.map(type => 
-            this.#triathlonData[type].distances[sport].kilometers
-        );
-        
-        const minDistance = Math.min(...distances);
-        const maxDistance = Math.max(...distances);
-        
-        return `${minDistance}km - ${maxDistance}km`;
-    }
-
-    /**
      * Transforms raw triathlon data into formatted table row data ready for display.
      * Each row contains processed information about a triathlon type including formatted
      * distances, difficulty styling, and calculated totals.
@@ -96,35 +79,5 @@ export class TriathlonViewModel {
                 }
             };
         });
-    }
-
-    /**
-     * Gets a copy of the available sport types array.
-     * Returns a new array to prevent external modification of internal state.
-     * 
-     * @returns {Sport[]} Array of sport types (Swimming, Cycling, Running)
-     */
-    get sportTypes(): Sport[] {
-        return [...this.#sportTypes];
-    }
-
-    /**
-     * Gets a copy of the available triathlon types array.
-     * Returns a new array to prevent external modification of internal state.
-     * 
-     * @returns {TriathlonType[]} Array of triathlon race types
-     */
-    get triathlonTypes(): TriathlonType[] {
-        return [...this.#triathlonTypes];
-    }
-
-    /**
-     * Gets a copy of the triathlon information data.
-     * Returns a new object to prevent external modification of internal state.
-     * 
-     * @returns {Record<TriathlonType, TriathlonInformation>} Complete triathlon data mapping
-     */
-    get triathlonInformation(): Record<TriathlonType, TriathlonInformation> {
-        return {...this.#triathlonData};
     }
 } 

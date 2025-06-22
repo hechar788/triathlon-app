@@ -1,7 +1,7 @@
 import React from "react";
 import { DataTable } from "@/app/_components/ui/data-table";
 import { columns } from "./columns";
-import { TriathlonRowData } from "../types";
+import { TriathlonRowData } from "./types";
 import TriathlonFilters from "./TriathlonFilters";
 
 /**

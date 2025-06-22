@@ -32,7 +32,7 @@ export default function RootLayout({ children }: Readonly<{children: React.React
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} m-0 p-0`}>
         <ScrollToTop />
-        <NavigationMenu className="fixed top-10 left-1/2 transform -translate-x-1/2 w-[95vw] max-w-6xl h-[60px] flex justify-center items-center border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 rounded-lg shadow-lg px-4">
+        <NavigationMenu className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[95vw] max-w-6xl h-[60px] flex justify-center items-center border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 rounded-lg shadow-lg px-4">
           <NavigationMenuList className="flex items-center justify-center gap-4 w-full">
             <NavigationMenuItem>
               <NavigationMenuLink asChild>

@@ -25,15 +25,18 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   filterComponent?: React.ComponentType<{ table: any }>
+  meta?: any
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   filterComponent: FilterComponent,
+  meta,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [expandedRows, setExpandedRows] = React.useState<Set<string>>(new Set())
 
   const table = useReactTable({
     data,
@@ -43,6 +46,11 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    meta: {
+      ...meta,
+      expandedRows,
+      setExpandedRows,
+    },
     state: {
       sorting,
       columnFilters,
@@ -61,112 +69,35 @@ export function DataTable<TData, TValue>({
           </div>
           <div className="space-y-2 text-center">
             <div className="text-xl font-semibold text-slate-600">No data available</div>
-            <div className="text-sm text-slate-500">There are no triathlon records to display at the moment.</div>
+            <div className="text-sm text-slate-500">There are no records to display at the moment.</div>
           </div>
         </div>
       );
     }
 
-    const attributes = [
-      { key: 'difficulty', label: 'Difficulty' },
-      { key: 'swimming', label: 'Swimming' },
-      { key: 'cycling', label: 'Cycling' },
-      { key: 'running', label: 'Running' },
-      { key: 'totalDistance', label: 'Total Distance' },
-    ];
-
+    // Generic mobile card layout for all table types
     return (
-      <div className="overflow-x-auto pb-4">
-        {/* Header row with race types */}
-        <div className="flex min-w-max bg-gradient-to-r from-slate-50 to-slate-100 sticky top-0 z-10">
-          <div className="w-36 px-4 py-6 font-bold text-sm text-slate-700 uppercase tracking-wider border-r border-slate-200/50 flex-shrink-0">
-            Category
-          </div>
-          {filteredRows.map((row) => (
-            <div key={row.id} className="flex-1 min-w-32 px-2 py-6 text-center border-r border-slate-200/50 last:border-r-0 flex items-center justify-center h-12">
-              <span className="font-bold text-xs text-slate-900 leading-tight truncate">{(row.original as any).type}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Attribute rows */}
-                {attributes.map((attribute, attrIndex) => (
-          <div key={attribute.key} className={`flex min-w-max h-16 ${attrIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'} border-b border-slate-200/60 last:border-b-0`}>
-            <div className="w-36 px-4 py-6 font-semibold text-sm text-slate-700 border-r border-slate-200/30 bg-slate-50/50 flex-shrink-0 flex items-center h-full">
-              {(attribute.key === 'swimming' || attribute.key === 'cycling' || attribute.key === 'running' || attribute.key === 'totalDistance') ? (
-                <button
-                  className="flex items-center space-x-1 hover:text-slate-600 transition-colors text-left w-full"
-                  onClick={() => {
-                    const column = table.getColumn(attribute.key === 'totalDistance' ? 'totalDistance' : attribute.key);
-                    column?.toggleSorting(column.getIsSorted() === "asc");
-                  }}
-                >
-                  <span>{attribute.label}</span>
-                  <span className="text-xs ml-1">
-                    {(() => {
-                      const column = table.getColumn(attribute.key === 'totalDistance' ? 'totalDistance' : attribute.key);
-                      const sortState = column?.getIsSorted();
-                      return sortState === "asc" ? "↑" : sortState === "desc" ? "↓" : "↕";
-                    })()}
-                  </span>
-                </button>
-              ) : (
-                attribute.label
-              )}
-            </div>
-            {filteredRows.map((row) => (
-              <div key={row.id} className="flex-1 min-w-32 px-2 py-6 border-r border-slate-200/30 last:border-r-0 flex justify-center items-center h-full">
-                {attribute.key === 'difficulty' && (
-                  (() => {
-                    const difficulty = (row.original as any).difficulty;
-                    const color = (row.original as any).difficultyColor;
-                    let badgeClass;
-                    switch (color) {
-                      case 'grey':
-                        badgeClass = 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border-gray-300';
-                        break;
-                      case 'green':
-                        badgeClass = 'bg-gradient-to-r from-emerald-100 to-green-200 text-emerald-800 border-emerald-300';
-                        break;
-                      case 'yellow':
-                        badgeClass = 'bg-gradient-to-r from-yellow-100 to-amber-200 text-yellow-800 border-yellow-300';
-                        break;
-                      case 'orange':
-                        badgeClass = 'bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 border-orange-300';
-                        break;
-                      default:
-                        badgeClass = 'bg-gradient-to-r from-red-100 to-rose-200 text-red-800 border-red-300';
-                    }
-                    return (
-                      <span className={`inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-bold border ${badgeClass} max-w-full`}>
-                        <span className="w-1 h-1 rounded-full bg-current mr-1 flex-shrink-0"></span>
-                        <span className="truncate text-center">{difficulty}</span>
-                      </span>
-                    );
-                  })()
-                )}
-                {attribute.key === 'swimming' && (
-                  <div className="bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 min-w-0 w-full max-w-20">
-                    <span className="font-medium text-slate-700 text-xs truncate block">{(row.original as any).distances[0] || "N/A"}</span>
+      <div className="space-y-4 p-4">
+        {filteredRows.map((row, index) => (
+          <div key={row.id} className={`bg-white rounded-lg border border-slate-200 shadow-sm p-4 ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}`}>
+            {table.getVisibleLeafColumns().map((column, colIndex) => {
+              const cell = row.getVisibleCells().find(cell => cell.column.id === column.id);
+              if (!cell) return null;
+              
+              return (
+                <div key={column.id} className={`flex justify-between items-center py-2 ${colIndex !== table.getVisibleLeafColumns().length - 1 ? 'border-b border-slate-100' : ''}`}>
+                                      <span className="font-medium text-slate-600 text-sm">
+                      {typeof column.columnDef.header === 'string' 
+                        ? column.columnDef.header 
+                        : column.id
+                      }
+                    </span>
+                  <div className="text-right">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </div>
-                )}
-                {attribute.key === 'cycling' && (
-                  <div className="bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 min-w-0 w-full max-w-20">
-                    <span className="font-medium text-slate-700 text-xs truncate block">{(row.original as any).distances[1] || "N/A"}</span>
-                  </div>
-                )}
-                {attribute.key === 'running' && (
-                  <div className="bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 min-w-0 w-full max-w-20">
-                    <span className="font-medium text-slate-700 text-xs truncate block">{(row.original as any).distances[2] || "N/A"}</span>
-                  </div>
-                )}
-                {attribute.key === 'totalDistance' && (
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-2 py-1 rounded-lg border border-blue-200 min-w-0 w-full max-w-20">
-                    <span className="font-bold text-blue-800 text-xs truncate block">{(row.original as any).totalDistance || "N/A"}</span>
-                  </div>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>
@@ -205,28 +136,95 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className={`
-                    group transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-indigo-50/50 hover:shadow-lg
-                    ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}
-                    border-b border-slate-200/60 last:border-b-0 hover:border-blue-200
-                  `}
-                >
-                  {row.getVisibleCells().map((cell, cellIndex) => (
-                    <TableCell 
-                      key={cell.id} 
-                      className={`
-                        px-3 py-3 text-slate-700 border-r border-slate-200/30 last:border-r-0
-                        transition-all duration-300 group-hover:border-blue-200/50
-                        ${cellIndex === 0 ? 'font-semibold' : ''}
-                      `}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                <React.Fragment key={row.id}>
+                  <TableRow
+                    data-state={row.getIsSelected() && "selected"}
+                    className={`
+                      group transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-indigo-50/50 hover:shadow-lg
+                      ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}
+                      border-b border-slate-200/60 hover:border-blue-200
+                    `}
+                  >
+                    {row.getVisibleCells().map((cell, cellIndex) => (
+                      <TableCell 
+                        key={cell.id} 
+                        className={`
+                          px-3 py-3 text-slate-700 border-r border-slate-200/30 last:border-r-0
+                          transition-all duration-300 group-hover:border-blue-200/50
+                          ${cellIndex === 0 ? 'font-semibold' : ''}
+                        `}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  
+                  {/* Expanded Row Content */}
+                  {expandedRows.has(row.id) && (
+                    <TableRow className="bg-slate-50">
+                      <TableCell colSpan={columns.length} className="px-6 py-4">
+                        <div className="space-y-4">
+                          {/* Exercise Management Controls */}
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-slate-700 text-sm">Exercises</h4>
+                            <button
+                              onClick={() => {
+                                // Add exercise logic - for now just show an alert
+                                alert(`Add exercise to plan: ${(row.original as any).name}`);
+                              }}
+                              className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
+                            >
+                              + Add Exercise
+                            </button>
+                          </div>
+                          
+                          {/* Exercises List */}
+                          {(row.original as any).exercises && (row.original as any).exercises.length > 0 ? (
+                            <div className="grid gap-2">
+                              {(row.original as any).exercises.map((exercise: any, exerciseIndex: number) => (
+                                <div 
+                                  key={exercise.id} 
+                                  className="bg-white p-3 rounded border border-slate-200 flex items-center justify-between"
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
+                                    <div>
+                                      <span className="font-medium text-slate-700 text-sm">{exercise.name}</span>
+                                      <div className="text-xs text-slate-500">{exercise.type}</div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center space-x-4">
+                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border bg-gradient-to-r from-emerald-100 to-green-200 text-emerald-800 border-emerald-300`}>
+                                      {exercise.difficulty}
+                                    </span>
+                                    <div className="bg-slate-100 px-2 py-1 rounded border border-slate-200">
+                                      <span className="text-sm text-slate-700">
+                                        {exercise.sets} sets × {exercise.reps} {exercise.repUnit}
+                                      </span>
+                                    </div>
+                                    <button
+                                      onClick={() => {
+                                        // Remove exercise logic
+                                        alert(`Remove exercise: ${exercise.name}`);
+                                      }}
+                                      className="px-2 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700 transition-colors"
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center text-slate-500 text-sm py-4">
+                              No exercises in this training plan yet. Click "Add Exercise" to get started.
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
               ))
             ) : (
               <TableRow>
@@ -237,7 +235,7 @@ export function DataTable<TData, TValue>({
                     </div>
                     <div className="space-y-2">
                       <div className="text-xl font-semibold text-slate-600">No data available</div>
-                      <div className="text-sm text-slate-500">There are no triathlon records to display at the moment.</div>
+                      <div className="text-sm text-slate-500">There are no records to display at the moment.</div>
                     </div>
                   </div>
                 </TableCell>

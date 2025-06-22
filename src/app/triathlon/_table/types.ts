@@ -1,4 +1,3 @@
-import { Difficulty } from "@/model/lib/enums/difficulty";
 
 /**
  * Interface representing a single row of data in the triathlon information table.
@@ -9,13 +8,11 @@ import { Difficulty } from "@/model/lib/enums/difficulty";
  * through to the column definitions and final display.
  */
 export interface TriathlonRowData {
-    /** Human-readable name of the triathlon type (e.g., "Sprint", "Standard", "Ironman") */
     type: string;
     difficulty: string
     difficultyColor: string;
     distances: string[];
     totalDistance: string;
-    /** Numeric values for sorting - distances in kilometers */
     sortValues: {
         swimming: number;
         cycling: number;
@@ -23,8 +20,3 @@ export interface TriathlonRowData {
         totalDistance: number;
     };
 }
-
-/**
- * Maps difficulty levels to their corresponding CSS color identifiers.
- */
-export type DifficultyColor = 'grey' | 'green' | 'yellow' | 'orange' | 'red';

@@ -1,6 +1,6 @@
 "use client"
 import { ColumnDef } from "@tanstack/react-table"
-import { TriathlonRowData } from "../types"
+import { TriathlonRowData } from "./types"
 
 /**
  * Column definitions for the triathlon data table using TanStack Table.

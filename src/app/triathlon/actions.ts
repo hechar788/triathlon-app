@@ -1,6 +1,6 @@
 import { TriathlonViewModel } from "./_viewModel/triathlonViewModel";
-import { TriathlonRowData } from "./types";
 import useTriathlonTable from "./_table/useTriathlonTable";
+import { ReactElement } from "react";
 
 /**
  * Controller class for accessing Triathlon data and components.
@@ -15,22 +15,12 @@ export default class TriathlonController {
     readonly #viewModel = new TriathlonViewModel();
 
     /**
-     * Each row contains formatted information about a specific triathlon type including
-     * difficulty, distances for each sport, and total distance.
-     * 
-     * @returns {TriathlonRowData[]} Array of formatted triathlon data for table display
-     */
-    private getTableData(): TriathlonRowData[] {
-        return this.#viewModel.getTableData();
-    }
-
-    /**
      * Gets the triathlon table component hook for rendering the data table.
      * This method returns the hook function that should be called within a React component.
      * 
      * @returns {Function} The useTriathlonTable hook function
      */
-    public getTriathlonTable() {
-        return useTriathlonTable(this.getTableData());
+    public getTriathlonTable(): ReactElement {
+        return useTriathlonTable(this.#viewModel.getTableData());
     }
 }
