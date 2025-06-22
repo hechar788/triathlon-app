@@ -12,24 +12,30 @@ export interface TrainingPlanRowData {
     difficulty: string;
     difficultyColor: string;
     exerciseCount: number;
-    exercises: ExerciseRowData[];
+    sortValues: {
+        exerciseCount: number;
+    };
 }
 
 /**
- * Interface representing an exercise within a training plan
+ * Interface representing a single row of data in the exercises table.
+ * Each row corresponds to a specific exercise within a training plan.
  */
-interface ExerciseRowData {
+export interface ExerciseRowData {
     id: string;
     name: string;
     type: string;
+    description: string;
+    targetMuscles: string[];
     sets: number;
     reps: number;
     repUnit: string;
     difficulty: string;
     difficultyColor: string;
-    targetMuscles: string[];
-    description: string;
-    isSelected?: boolean;
+    sortValues: {
+        sets: number;
+        reps: number;
+    };
 }
 
 /**

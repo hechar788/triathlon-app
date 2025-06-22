@@ -11,6 +11,7 @@ import {
 } from "@/app/_components/ui/navigation-menu";
 import { cn } from "@/app/_lib/utils";
 import { ScrollToTop } from "@/app/_components/scroll-to-top";
+import { PWARegistration } from "./_components/pwa-registration";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,12 +26,20 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Triathlon Training App",
   description: "Triathlon Training App for BCDE211 - Hector Harris. This application describes various generic triathlon types and allows users to create training plans for them.",
+  manifest: "/manifest.json",
+  themeColor: "#000000",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Triathlon App",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{children: React.ReactNode}>) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} m-0 p-0`}>
+        <PWARegistration />
         <ScrollToTop />
         <NavigationMenu className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[95vw] max-w-6xl h-[60px] flex justify-center items-center border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 rounded-lg shadow-lg px-4">
           <NavigationMenuList className="flex items-center justify-center gap-4 w-full">

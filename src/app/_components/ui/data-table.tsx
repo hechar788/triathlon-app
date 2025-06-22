@@ -5,6 +5,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
+  ColumnResizeMode,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -26,6 +27,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   filterComponent?: React.ComponentType<{ table: any }>
   meta?: any
+  enableColumnResizing?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -33,6 +35,7 @@ export function DataTable<TData, TValue>({
   data,
   filterComponent: FilterComponent,
   meta,
+  enableColumnResizing = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -46,6 +49,8 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    enableColumnResizing: enableColumnResizing,
+    columnResizeMode: enableColumnResizing ? ("onChange" as ColumnResizeMode) : undefined,
     meta: {
       ...meta,
       expandedRows,
@@ -114,25 +119,39 @@ export function DataTable<TData, TValue>({
       
       {/* Desktop Table */}
       <div className="hidden md:block bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 overflow-hidden">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="bg-gradient-to-r from-slate-50 to-slate-100 border-b-0 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-150">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="px-3 py-3 text-slate-700 font-bold text-sm uppercase tracking-wider border-r border-slate-200/50 last:border-r-0">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
+        <div className={enableColumnResizing ? 'overflow-x-auto' : ''}>
+          <Table style={{ width: enableColumnResizing ? `${table.getCenterTotalSize()}px` : '100%', minWidth: enableColumnResizing ? '100%' : 'auto' }}>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="bg-gradient-to-r from-slate-50 to-slate-100 border-b-0 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-150">
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead 
+                        key={header.id} 
+                        className={`px-3 py-3 text-slate-700 font-bold text-sm uppercase tracking-wider border-r border-slate-200/50 last:border-r-0 ${enableColumnResizing ? 'relative' : ''}`}
+                        style={enableColumnResizing ? { width: header.getSize() } : {}}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                        {enableColumnResizing && header.column.getCanResize() && (
+                          <div
+                            onMouseDown={header.getResizeHandler()}
+                            onTouchStart={header.getResizeHandler()}
+                            className={`resizer absolute right-0 top-0 h-full w-1 bg-slate-300 cursor-col-resize select-none touch-none hover:bg-blue-500 ${
+                              header.column.getIsResizing() ? 'bg-blue-500' : ''
+                            }`}
+                          />
+                        )}
+                      </TableHead>
+                    )
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
@@ -143,7 +162,10 @@ export function DataTable<TData, TValue>({
                       group transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-indigo-50/50 hover:shadow-lg
                       ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}
                       border-b border-slate-200/60 hover:border-blue-200
+                      ${meta?.onRowClick ? 'cursor-pointer' : ''}
+                      ${meta?.selectedPlan && meta.selectedPlan === (row.original as any).name ? 'bg-blue-50 border-blue-300' : ''}
                     `}
+                    onClick={() => meta?.onRowClick?.(row.original)}
                   >
                     {row.getVisibleCells().map((cell, cellIndex) => (
                       <TableCell 
@@ -153,6 +175,7 @@ export function DataTable<TData, TValue>({
                           transition-all duration-300 group-hover:border-blue-200/50
                           ${cellIndex === 0 ? 'font-semibold' : ''}
                         `}
+                        style={enableColumnResizing ? { width: cell.column.getSize() } : {}}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
@@ -243,6 +266,7 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
 
       {/* Mobile Table */}

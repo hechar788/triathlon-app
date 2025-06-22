@@ -1,0 +1,17 @@
+{
+  "name": "Triathlon Training App",
+  "short_name": "Triathlon App",
+  "description": "Triathlon Training App for BCDE211 - Create and manage triathlon training plans",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16",
+      "type": "image/x-icon"
+    }
+  ]
+} 
