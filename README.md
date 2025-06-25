@@ -22,7 +22,7 @@ A triathlon training management application built with Next.js and TypeScript. T
 - **Framework**: Next.js 15 with React 19
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **UI Components**: Radix UI primitives
+- **UI Components**: ShadCN UI / Radix UI primitives
 - **Data Tables**: TanStack Table
 - **PWA**: next-pwa
 - **Testing**: Jest with ts-jest
@@ -107,12 +107,6 @@ Run the test suite:
 npm test
 ```
 
-The app includes comprehensive tests for:
-- Distance calculations and conversions
-- Training plan management
-- Triathlon type definitions
-- Core business logic
-
 ## PWA Features
 
 This app is a fully functional Progressive Web App with:
@@ -127,23 +121,8 @@ To install the PWA:
 2. Look for the "Install App" prompt or menu option
 3. Follow the installation instructions
 
-## Browser Support
-
-- Chrome/Edge (recommended for full PWA features)
-- Firefox
-- Safari (limited PWA support)
-
-Modern browsers with ES2020+ support required.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Development Notes
-
-- Uses TypeScript strict mode for type safety
-- Follows Next.js app directory conventions
-- Implements clean architecture with separated concerns
-- Uses custom hooks for table management
-- Supports multiple data persistence strategies
-- Built with accessibility and performance in mind
