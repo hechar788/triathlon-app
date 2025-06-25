@@ -43,10 +43,6 @@ export const exerciseColumns: ColumnDef<ExerciseRowData>[] = [
     id: "sets",
     accessorFn: (row) => row.sortValues.sets,
     enableSorting: true,
-    enableResizing: true,
-    size: 80,
-    minSize: 60,
-    maxSize: 120,
     header: ({ column }) => (
       <div className="flex items-center justify-center">
         <button
@@ -106,10 +102,6 @@ export const exerciseColumns: ColumnDef<ExerciseRowData>[] = [
     id: "reps",
     accessorFn: (row) => row.sortValues.reps,
     enableSorting: true,
-    enableResizing: true,
-    size: 80,
-    minSize: 60,
-    maxSize: 120,
     header: ({ column }) => (
       <div className="flex items-center justify-center">
         <button
@@ -163,14 +155,10 @@ export const exerciseColumns: ColumnDef<ExerciseRowData>[] = [
     },
   },
   /**
-   * Units Column - Non-editable
+   * Units Column
    */
   {
     accessorKey: "repUnit",
-    enableResizing: true,
-    size: 80,
-    minSize: 60,
-    maxSize: 120,
     header: () => (
       <div className="flex items-center justify-center">
         <span className="font-bold text-slate-800 text-sm">Units</span>
@@ -192,10 +180,6 @@ export const exerciseColumns: ColumnDef<ExerciseRowData>[] = [
    */
   {
     accessorKey: "targetMuscles",
-    enableResizing: true,
-    size: 200,
-    minSize: 150,
-    maxSize: 400,
     header: () => (
       <div className="flex items-center justify-center">
         <span className="font-bold text-slate-800 text-sm">Target Muscles</span>
@@ -217,10 +201,6 @@ export const exerciseColumns: ColumnDef<ExerciseRowData>[] = [
    */
   {
     accessorKey: "difficulty",
-    enableResizing: true,
-    size: 120,
-    minSize: 100,
-    maxSize: 180,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
@@ -265,13 +245,9 @@ export const exerciseColumns: ColumnDef<ExerciseRowData>[] = [
    */
   {
     id: "actions",
-    enableResizing: true,
-    size: 100,
-    minSize: 80,
-    maxSize: 150,
     header: () => (
       <div className="flex items-center justify-center">
-        <span className="font-bold text-slate-800 text-sm">Actions</span>
+        {/* Empty header */}
       </div>
     ),
     cell: ({ row, table }) => {

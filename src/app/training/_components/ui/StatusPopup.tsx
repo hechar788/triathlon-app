@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface SuccessPopupProps {
+interface StatusPopupProps {
   message: string | null;
   type?: 'success' | 'error' | 'info';
 }
@@ -8,7 +8,7 @@ interface SuccessPopupProps {
 /**
  * Reusable popup component for displaying status messages at the top of the screen
  */
-export default function SuccessPopup({ message, type = 'success' }: SuccessPopupProps) {
+export default function StatusPopup({ message, type = 'success' }: StatusPopupProps) {
   if (!message) return null;
 
   const getStyles = () => {

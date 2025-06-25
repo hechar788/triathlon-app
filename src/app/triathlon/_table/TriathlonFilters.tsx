@@ -15,15 +15,12 @@ interface TriathlonFiltersProps {
  */
 export default function TriathlonFilters({ table }: TriathlonFiltersProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  // Get current filter values
   const difficultyFilter = table.getColumn("difficulty")?.getFilterValue() as string[] || [];
   const typeFilter = table.getColumn("type")?.getFilterValue() as string[] || [];
 
-  // Available options
   const difficulties = Object.values(Difficulty).filter(d => d !== Difficulty.UNKNOWN);
   const raceTypes = Object.values(TriathlonType).map(type => type.replace(/_/g, ' '));
 
-  // Filter handlers
   const handleDifficultyChange = (difficulty: string, checked: boolean) => {
     const currentFilter = difficultyFilter;
     let newFilter;
@@ -58,10 +55,10 @@ export default function TriathlonFilters({ table }: TriathlonFiltersProps) {
   return (
     <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg border border-slate-200 shadow-sm overflow-hidden">
       {/* Toggle Header */}
-      <div className="px-4 py-3 border-b border-slate-200 bg-white/50">
+      <div className="px-4 py-3 border-b border-slate-200 bg-white/50 hover:bg-slate-100 hover:shadow-sm transition-all duration-200 cursor-pointer">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="flex items-center justify-between w-full group hover:bg-slate-50 rounded-md px-2 py-1 transition-colors"
+          className="flex items-center justify-between w-full group cursor-pointer"
         >
           <div className="flex items-center gap-2">
             <span className="font-semibold text-slate-800">Filters</span>
@@ -71,7 +68,7 @@ export default function TriathlonFilters({ table }: TriathlonFiltersProps) {
               </span>
             )}
           </div>
-          <div className={`transform transition-transform duration-200 ${isCollapsed ? 'rotate-180' : ''}`}>
+          <div className={`transform transition-transform duration-200 ${!isCollapsed ? 'rotate-180' : ''}`}>
             <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
@@ -135,7 +132,7 @@ export default function TriathlonFilters({ table }: TriathlonFiltersProps) {
             <div className="flex items-end">
               <button
                 onClick={clearAllFilters}
-                className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:from-red-600 hover:to-pink-600 font-medium text-sm"
+                className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:from-red-600 hover:to-pink-600 font-medium text-sm cursor-pointer"
               >
                 Clear All Filters
               </button>

@@ -12,13 +12,6 @@ import TrainingPlanSearch from "./TrainingPlanSearch";
  * @param onPlanSelect - Callback when a training plan is selected
  * @param onPlanDelete - Callback when a training plan is deleted
  * @param onDifficultyEdit - Callback when a training plan difficulty is edited
- * @param onSave - Callback when save to localStorage is clicked
- * @param onLoad - Callback when load from localStorage is clicked
- * @param onIndexedDBSave - Callback when save to IndexedDB is clicked
- * @param onIndexedDBLoad - Callback when load from IndexedDB is clicked
- * @param onExportToFile - Callback when export to file is clicked
- * @param onImportFromFile - Callback when import from file is clicked
- * @param showFileSystemButtons - Whether to show file system buttons
  * @returns Configured DataTable component with training plan columns and data
  */
 export default function useTrainingPlanTable(
@@ -26,34 +19,19 @@ export default function useTrainingPlanTable(
     selectedPlan: string | null,
     onPlanSelect: (planName: string) => void,
     onPlanDelete: (planName: string) => void,
-    onDifficultyEdit?: (planName: string) => void,
-    onSave?: () => void,
-    onLoad?: () => void,
-    onIndexedDBSave?: () => void,
-    onIndexedDBLoad?: () => void,
-    onExportToFile?: () => void,
-    onImportFromFile?: () => void,
-    showFileSystemButtons: boolean = false
+    onDifficultyEdit?: (planName: string) => void
 ) {
-    // Create a wrapped filter component that includes all storage handlers
+    // Create a wrapped filter component
     const FilterComponentWithProps = React.useCallback((props: { table: any }) => (
-        <TrainingPlanSearch 
-            {...props} 
-            onSave={onSave} 
-            onLoad={onLoad}
-            onIndexedDBSave={onIndexedDBSave}
-            onIndexedDBLoad={onIndexedDBLoad}
-            onExportToFile={onExportToFile}
-            onImportFromFile={onImportFromFile}
-            showFileSystemButtons={showFileSystemButtons}
-        />
-    ), [onSave, onLoad, onIndexedDBSave, onIndexedDBLoad, onExportToFile, onImportFromFile, showFileSystemButtons]);
+        <TrainingPlanSearch {...props} />
+    ), []);
 
     return (
         <DataTable 
             columns={trainingPlanColumns} 
             data={data}
             filterComponent={FilterComponentWithProps}
+            containerWidth="full"
             meta={{
                 selectedPlan,
                 onPlanSelect,

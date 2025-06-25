@@ -281,6 +281,7 @@ export default function EditHistoryPopup({
                                                     value={customReps}
                                                     onChange={(e) => setCustomReps(e.target.value)}
                                                     className="w-20 px-2 py-1 text-center border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-slate-500 font-semibold"
+                                                    autoFocus
                                                 />
                                             ) : (
                                                 <span className="text-slate-500">Enter custom value</span>
@@ -317,52 +318,30 @@ export default function EditHistoryPopup({
                             )}
                         </div>
                     </div>
-
-                    {(sortedSetsHistory.length === 0 && sortedRepsHistory.length === 0) && (
-                        <div className="text-center py-6 mt-6 border-t border-slate-200">
-                            <p className="text-slate-500">No previous edits found</p>
-                            <p className="text-slate-400 text-sm">This will be your first edit for this exercise.</p>
-                        </div>
-                    )}
                 </div>
 
                 <div className="border-t border-slate-200 pt-4 flex justify-between items-center">
                     <div className="text-sm text-slate-500">
-                        {`Will set to: ${showCustomSetsInput ? customSets || 'invalid' : selectedSets} sets, ${showCustomRepsInput ? customReps || 'invalid' : selectedReps} reps`}
+                        {showCustomSetsInput || showCustomRepsInput ? (
+                            'Using custom values'
+                        ) : (
+                            `Sets: ${selectedSets}, Reps: ${selectedReps}`
+                        )}
                     </div>
                     <div className="flex space-x-3">
-                        <Button 
-                            variant="outline" 
-                            onClick={handleCancel}
-                            className="px-6"
-                        >
+                        <Button variant="outline" onClick={handleCancel} className="px-6">
                             Cancel
                         </Button>
-                        <div className="relative group">
-                            <Button 
-                                onClick={handleConfirm}
-                                disabled={
-                                    (showCustomSetsInput && (customSets === '' || isNaN(parseInt(customSets)) || parseInt(customSets) <= 0)) ||
-                                    (showCustomRepsInput && (customReps === '' || isNaN(parseInt(customReps)) || parseInt(customReps) <= 0))
-                                }
-                                className="px-6"
-                            >
-                                Confirm Changes
-                            </Button>
-                            {((showCustomSetsInput && (customSets === '' || isNaN(parseInt(customSets)) || parseInt(customSets) <= 0)) ||
-                              (showCustomRepsInput && (customReps === '' || isNaN(parseInt(customReps)) || parseInt(customReps) <= 0))) && (
-                                <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-[60]" style={{whiteSpace: 'nowrap'}}>
-                                    {showCustomSetsInput && (customSets === '' || isNaN(parseInt(customSets)) || parseInt(customSets) <= 0) && 
-                                     showCustomRepsInput && (customReps === '' || isNaN(parseInt(customReps)) || parseInt(customReps) <= 0)
-                                        ? 'Please enter valid numbers for both sets and reps'
-                                        : showCustomSetsInput && (customSets === '' || isNaN(parseInt(customSets)) || parseInt(customSets) <= 0)
-                                        ? 'Please enter a valid number for sets'
-                                        : 'Please enter a valid number for reps'
-                                    }
-                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-                                </div>
-                            )}
-                        </div>
+                        <Button 
+                            onClick={handleConfirm} 
+                            className="px-6 bg-blue-600 hover:bg-blue-700"
+                            disabled={
+                                (showCustomSetsInput && (isNaN(parseInt(customSets)) || parseInt(customSets) <= 0)) ||
+                                (showCustomRepsInput && (isNaN(parseInt(customReps)) || parseInt(customReps) <= 0))
+                            }
+                        >
+                            Update Exercise
+                        </Button>
                     </div>
                 </div>
             </div>

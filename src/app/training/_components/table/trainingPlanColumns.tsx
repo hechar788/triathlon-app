@@ -131,7 +131,7 @@ export const trainingPlanColumns: ColumnDef<TrainingPlanRowData>[] = [
     id: "actions",
     header: () => (
       <div className="flex items-center justify-center">
-        <span className="font-bold text-slate-800 text-sm">Actions</span>
+        {/* Empty header */}
       </div>
     ),
     cell: ({ row, table }) => {

@@ -3,7 +3,7 @@ import { Sport } from "@/model/lib/enums/sport";
 import { TriathlonInformation } from "@/model/lib/types/triathlonInformation";
 import { Difficulty } from "@/model/lib/enums/difficulty";
 import { Triathlon } from "@/model/components/triathlon/triathlon";
-import { TriathlonRowData } from "../_table/types";
+import { TriathlonRowData } from "../_table/columns";
 import { DifficultyColor } from "@/app/_lib/types";
 
 /**
@@ -79,5 +79,50 @@ export class TriathlonViewModel {
                 }
             };
         });
+    }
+
+    /**
+     * Gets the distance range information for header display.
+     * Calculates min/max total distances and individual sport ranges.
+     * 
+     * @returns {Object} Object containing formatted distance range information
+     */
+    getDistanceRangeInfo() {
+        const totalDistances: number[] = [];
+        const sportRanges: Record<Sport, number[]> = {
+            [Sport.SWIM]: [],
+            [Sport.BIKE]: [],
+            [Sport.RUN]: []
+        };
+
+        // Collect all distances
+        this.#triathlonTypes.forEach(type => {
+            const info = this.#triathlonData[type];
+            const totalDistance = Object.values(info.distances).reduce((sum, distance) => sum + distance.kilometers, 0);
+            totalDistances.push(totalDistance);
+
+            this.#sportTypes.forEach(sport => {
+                sportRanges[sport].push(info.distances[sport].kilometers);
+            });
+        });
+
+        // Calculate ranges
+        const minTotal = Math.min(...totalDistances);
+        const maxTotal = Math.max(...totalDistances);
+
+        const sportSummaries = this.#sportTypes.map(sport => {
+            const distances = sportRanges[sport];
+            const min = Math.min(...distances);
+            const max = Math.max(...distances);
+            return {
+                sport: sport.charAt(0).toUpperCase() + sport.slice(1).toLowerCase(),
+                range: `${this.#formatDistance(min)} - ${this.#formatDistance(max)}`
+            };
+        });
+
+        return {
+            totalRange: `${this.#formatDistance(minTotal)} - ${this.#formatDistance(maxTotal)}`,
+            sportSummaries
+        };
     }
 } 

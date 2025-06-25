@@ -2,13 +2,13 @@ import { Difficulty } from "@/model/lib/enums/difficulty";
 import { Sport } from "@/model/lib/enums/sport";
 import { RepUnit } from "@/model/lib/enums/units";
 import TrainingManagement from "@/model/components/training/management/trainingManagement";
-import TrainingPlan from "@/model/components/training/plan/trainingPlan";
 import TrainingExercise from "@/model/components/training/exercise/trainingExercise";
-import { TrainingPlanRowData, ExerciseRowData } from "../_table/types";
+import { TrainingPlanRowData, ExerciseRowData } from "../_components/table/types";
 import { DifficultyColor } from "@/app/_lib/types";
 import { IExercise } from "@/model/lib/interfaces/iExercise";
 import { Muscle } from "@/model/lib/enums/muscle";
 import { ExerciseName } from "@/model/lib/types/exerciseName";
+import TrainingPlan from "@/model/components/training/plan/trainingPlan";
 
 // Interface for saved training management data
 interface SavedTrainingData {
@@ -210,7 +210,7 @@ export class TrainingViewModel {
         if (!this.#selectedPlanName) {
             throw new Error("No training plan selected");
         }
-        const plan = this.#trainingManagement.getTrainingPlan(this.#selectedPlanName);
+        const plan: TrainingPlan = this.#trainingManagement.getTrainingPlan(this.#selectedPlanName);
         plan.addExercise(exercise);
     }
 
@@ -460,8 +460,7 @@ export class TrainingViewModel {
             this.#trainingManagement = this.#deserializeTrainingManagement(dataToLoad.data);
             this.#selectedPlanName = null; // Reset selected plan
             
-            // Edit history is preserved when loading (it's maintained separately)
-            // This way users don't lose their edit history when switching between saves
+            // Edit history is maintained seperately so users don't lose their edit history when switching between saves
         } catch (error) {
             console.error('Error loading from localStorage:', error);
             throw new Error('Failed to load training data');
@@ -677,24 +676,6 @@ export class TrainingViewModel {
             console.error('Error saving to IndexedDB:', error);
             throw new Error('Failed to save training data to IndexedDB');
         }
-    }
-
-    /**
-     * Gets a saved data entry by custom name
-     */
-    async #getSavedDataByName(db: IDBDatabase, name: string): Promise<SavedTrainingData & { customName?: string } | null> {
-        const transaction = db.transaction([this.#indexedDBStoreName], 'readonly');
-        const store = transaction.objectStore(this.#indexedDBStoreName);
-        
-        return new Promise((resolve, reject) => {
-            const request = store.getAll();
-            request.onsuccess = () => {
-                const results = request.result as (SavedTrainingData & { customName?: string })[];
-                const found = results.find(item => item.customName === name);
-                resolve(found || null);
-            };
-            request.onerror = () => reject(request.error);
-        });
     }
 
     /**

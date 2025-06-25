@@ -22,7 +22,7 @@ export default function useExerciseTable(
         <DataTable 
             columns={exerciseColumns} 
             data={data}
-            enableColumnResizing={true}
+            containerWidth="full"
             meta={{
                 onExerciseDelete,
                 onExerciseSetsEdit,

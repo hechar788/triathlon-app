@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { TrainingViewModel } from "./_viewModel/trainingViewModel";
-import useTrainingPlanTable from "./_table/useTrainingPlanTable";
-import useExerciseTable from "./_table/useExerciseTable";
+import useTrainingPlanTable from "./_components/table/useTrainingPlanTable";
+import useExerciseTable from "./_components/table/useExerciseTable";
 import { Difficulty } from "@/model/lib/enums/difficulty";
 
 /**
@@ -31,41 +31,20 @@ export default class TrainingController {
      * @param onPlanSelect Callback when a training plan is selected 
      * @param onPlanDelete Callback when a training plan is deleted
      * @param onDifficultyEdit Callback when a training plan difficulty is edited
-     * @param onSave Callback when save to localStorage is clicked
-     * @param onLoad Callback when load from localStorage is clicked
-     * @param onIndexedDBSave Callback when save to IndexedDB is clicked
-     * @param onIndexedDBLoad Callback when load from IndexedDB is clicked
-     * @param onExportToFile Callback when export to file is clicked
-     * @param onImportFromFile Callback when import from file is clicked
      * @returns {ReactElement} The training plan table component
      */
     public getTrainingPlanTable(
         selectedPlan: string | null,
         onPlanSelect: (planName: string) => void,
         onPlanDelete: (planName: string) => void,
-        onDifficultyEdit?: (planName: string) => void,
-        onSave?: () => void,
-        onLoad?: () => void,
-        onIndexedDBSave?: () => void,
-        onIndexedDBLoad?: () => void,
-        onExportToFile?: () => void,
-        onImportFromFile?: () => void
+        onDifficultyEdit?: (planName: string) => void
     ): ReactElement {
-        const showFileSystemButtons = TrainingViewModel.isFileSystemAPISupported();
-        
         return useTrainingPlanTable(
             this.#viewModel.getTrainingPlanTableData(),
             selectedPlan,
             onPlanSelect,
             onPlanDelete,
-            onDifficultyEdit,
-            onSave,
-            onLoad,
-            onIndexedDBSave,
-            onIndexedDBLoad,
-            onExportToFile,
-            onImportFromFile,
-            showFileSystemButtons
+            onDifficultyEdit
         );
     }
 

@@ -5,7 +5,6 @@ import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
-  ColumnResizeMode,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -27,7 +26,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   filterComponent?: React.ComponentType<{ table: any }>
   meta?: any
-  enableColumnResizing?: boolean
+  containerWidth?: 'full' | 'constrained'
 }
 
 export function DataTable<TData, TValue>({
@@ -35,7 +34,7 @@ export function DataTable<TData, TValue>({
   data,
   filterComponent: FilterComponent,
   meta,
-  enableColumnResizing = false,
+  containerWidth = 'constrained',
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -49,8 +48,6 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    enableColumnResizing: enableColumnResizing,
-    columnResizeMode: enableColumnResizing ? ("onChange" as ColumnResizeMode) : undefined,
     meta: {
       ...meta,
       expandedRows,
@@ -91,12 +88,12 @@ export function DataTable<TData, TValue>({
               
               return (
                 <div key={column.id} className={`flex justify-between items-center py-2 ${colIndex !== table.getVisibleLeafColumns().length - 1 ? 'border-b border-slate-100' : ''}`}>
-                                      <span className="font-medium text-slate-600 text-sm">
-                      {typeof column.columnDef.header === 'string' 
-                        ? column.columnDef.header 
-                        : column.id
-                      }
-                    </span>
+                  <span className="font-medium text-slate-600 text-sm">
+                    {typeof column.columnDef.header === 'string' 
+                      ? column.columnDef.header 
+                      : column.id
+                    }
+                  </span>
                   <div className="text-right">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </div>
@@ -109,8 +106,12 @@ export function DataTable<TData, TValue>({
     );
   };
 
+  const containerClass = containerWidth === 'full' 
+    ? 'w-full space-y-4' 
+    : 'w-[90%] max-w-6xl mx-auto space-y-4';
+
   return (
-    <div className="w-[90%] max-w-6xl mx-auto space-y-4">
+    <div className={containerClass}>
       {FilterComponent && (
         <div>
           <FilterComponent table={table} />
@@ -119,39 +120,28 @@ export function DataTable<TData, TValue>({
       
       {/* Desktop Table */}
       <div className="hidden md:block bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 overflow-hidden">
-        <div className={enableColumnResizing ? 'overflow-x-auto' : ''}>
-          <Table style={{ width: enableColumnResizing ? `${table.getCenterTotalSize()}px` : '100%', minWidth: enableColumnResizing ? '100%' : 'auto' }}>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="bg-gradient-to-r from-slate-50 to-slate-100 border-b-0 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-150">
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead 
-                        key={header.id} 
-                        className={`px-3 py-3 text-slate-700 font-bold text-sm uppercase tracking-wider border-r border-slate-200/50 last:border-r-0 ${enableColumnResizing ? 'relative' : ''}`}
-                        style={enableColumnResizing ? { width: header.getSize() } : {}}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                        {enableColumnResizing && header.column.getCanResize() && (
-                          <div
-                            onMouseDown={header.getResizeHandler()}
-                            onTouchStart={header.getResizeHandler()}
-                            className={`resizer absolute right-0 top-0 h-full w-1 bg-slate-300 cursor-col-resize select-none touch-none hover:bg-blue-500 ${
-                              header.column.getIsResizing() ? 'bg-blue-500' : ''
-                            }`}
-                          />
-                        )}
-                      </TableHead>
-                    )
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
+        <Table style={{ width: '100%' }}>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="bg-gradient-to-r from-slate-50 to-slate-100 border-b-0 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-150">
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead 
+                      key={header.id} 
+                      className="px-3 py-3 text-slate-700 font-bold text-sm uppercase tracking-wider border-r border-slate-200/50 last:border-r-0"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  )
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
@@ -175,7 +165,6 @@ export function DataTable<TData, TValue>({
                           transition-all duration-300 group-hover:border-blue-200/50
                           ${cellIndex === 0 ? 'font-semibold' : ''}
                         `}
-                        style={enableColumnResizing ? { width: cell.column.getSize() } : {}}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
@@ -266,7 +255,6 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-        </div>
       </div>
 
       {/* Mobile Table */}

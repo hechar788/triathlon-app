@@ -23,4 +23,13 @@ export default class TriathlonController {
     public getTriathlonTable(): ReactElement {
         return useTriathlonTable(this.#viewModel.getTableData());
     }
+
+    /**
+     * Gets the distance range information for header display.
+     * 
+     * @returns {Object} Object containing total distance range and individual sport summaries
+     */
+    public getDistanceRangeInfo() {
+        return this.#viewModel.getDistanceRangeInfo();
+    }
 }
